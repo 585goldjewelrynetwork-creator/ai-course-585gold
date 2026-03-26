@@ -1,12 +1,12 @@
 :root {
-    --accent: #ED2E2E;
-    --accent-hover: #d42525;
-    --bg-pink: #FFE4E0;
-    --bg-pink-light: #FFF0EE;
-    --gold: #DED09E;
-    --gold-dark: #C4B778;
+    --accent: #00e5ff;
+    --accent-hover:#00b8d4;
+    --bg-pink: #e0f0ff;
+    --bg-pink-light: #f0f8ff;
+    --gold: #00b8d4;
+    --gold-dark: #00b8d4;
     --white: #FFFFFF;
-    --text-dark: #2D2D2D;
+    --text-dark: #1a1a2e;
     --text-medium: #555555;
     --text-light: #888888;
     --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
@@ -31,7 +31,7 @@ body {
 /* === ШАПКА === */
 .header {
     background: var(--white);
-    border-bottom: 3px solid var(--gold);
+    border-bottom: 3px solid var(--accent);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -65,23 +65,34 @@ body {
     font-size: 20px;
     font-weight: 700;
     color: var(--text-dark);
-    border-left: 2px solid var(--gold);
+    border-left: 2px solid var(--accent);
     padding-left: 14px;
 }
-.header-nav { display: flex; gap: 8px; }
-.nav-btn {
-    padding: 8px 20px;
-    border-radius: 25px;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 600;
-    transition: var(--transition);
-    border: 2px solid transparent;
+
+/* === ПОИСК В ШАПКЕ === */
+.header-search {
+    margin-left: auto;
 }
-.nav-btn-courses { background: var(--accent); color: var(--white); }
-.nav-btn-courses:hover { background: var(--accent-hover); }
-.nav-btn-articles { background: transparent; color: var(--text-dark); border-color: var(--gold); }
-.nav-btn-articles:hover { background: var(--gold); color: var(--text-dark); }
+.header-search .search-input {
+    padding: 10px 16px 10px 40px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    font-size: 14px;
+    width: 280px;
+    background: var(--white);
+    outline: none;
+    transition: var(--transition);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 14px center;
+}
+.header-search .search-input:focus {
+    border-color: #ccc;
+    outline: none;
+    box-shadow: none;
+}
+.header-search .search-input::placeholder { color: var(--text-light); }
+
 .back-link {
     color: var(--accent);
     text-decoration: none;
@@ -133,32 +144,12 @@ body {
     font-weight: 600;
 }
 
-/* === ПОИСК === */
-.search-bar { margin-bottom: 32px; }
-.search-input {
-    width: 100%;
-    max-width: 500px;
-    padding: 14px 20px 14px 48px;
-    border: 2px solid var(--gold);
-    border-radius: 30px;
-    font-size: 15px;
-    background: var(--white);
-    color: var(--text-dark);
-    outline: none;
-    transition: var(--transition);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: 16px center;
-}
-.search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(237, 46, 46, 0.1); }
-.search-input::placeholder { color: var(--text-light); }
-
 /* === ФИЛЬТРЫ === */
-.filter-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.filter-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;justify-content: center; }
 .filter-btn {
     padding: 8px 18px;
     border-radius: 25px;
-    border: 2px solid var(--gold);
+    border: none;
     background: var(--white);
     color: var(--text-dark);
     font-size: 13px;
@@ -336,18 +327,34 @@ body {
 /* === АДАПТИВ === */
 @media (max-width: 768px) {
     .header-inner { flex-direction: column; gap: 12px; }
-    .header-nav { width: 100%; justify-content: center; }
+    .header-search { width: 100%; }
+    .header-search .search-input { width: 100%; }
     .hero { padding: 40px 20px 30px; }
     .hero h1 { font-size: 28px; }
     .hero p { font-size: 16px; }
     .section-header { flex-direction: column; align-items: flex-start; gap: 8px; }
     .courses-grid { grid-template-columns: 1fr; }
     .articles-grid { grid-template-columns: 1fr; }
-    .search-input { max-width: 100%; }
     .article-container { padding: 24px; }
     .article-container h1 { font-size: 24px; }
     .portal-title { font-size: 16px; }
     .section-title { font-size: 22px; }
+}
+/* === ВЫРАВНИВАНИЕ ВНУТРИ КАРТОЧЕК === */
+.card-header-text {
+    display: flex;
+    flex-direction: column;
+    min-height: 70px;
+}
+
+.card-body {
+    padding: 16px 28px 0;
+    flex-grow: 1;
+}
+
+.card-meta {
+    padding: 8px 28px 16px;
+    margin-top: auto;
 }
 @media (max-width: 400px) {
     .card-header { padding: 20px 20px 0; }

@@ -20,13 +20,11 @@
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 coursesData = data;
-                renderCourses(data);
-                updateCoursesCount(data.length);
+                renderAll();
             })
             .catch(function () {
                 coursesData = getDefaultCourses();
-                renderCourses(coursesData);
-                updateCoursesCount(coursesData.length);
+                renderAll();
             });
     }
 
@@ -35,43 +33,89 @@
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 articlesData = data;
-                renderArticles(data);
-                updateArticlesCount(data.length);
+                renderAll();
             })
             .catch(function () {
                 articlesData = [];
-                renderArticles([]);
-                updateArticlesCount(0);
+                renderAll();
             });
+    }
+
+    function renderAll() {
+        var filteredCourses = filterItems(coursesData, true);
+        var filteredArticles = filterItems(articlesData, false);
+
+        var showArticlesOnly = activeFilter === 'Статьи';
+        var showCoursesOnly = activeFilter !== 'all' && activeFilter !== 'Статьи';
+
+        var coursesToShow = showArticlesOnly ? [] : filteredCourses;
+        var articlesToShow = (showCoursesOnly) ? [] : filteredArticles;
+
+        renderCourses(coursesToShow);
+        renderArticles(articlesToShow);
+
+        var empty = document.getElementById('coursesEmpty');
+        if (coursesToShow.length === 0 && articlesToShow.length === 0) {
+            empty.classList.remove('hidden');
+        } else {
+            empty.classList.add('hidden');
+        }
+    }
+
+    function filterItems(items, isCourse) {
+        var result = [];
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var title = (item.title || '').toLowerCase();
+            var desc = (item.description || '').toLowerCase();
+            var category = item.category || '';
+
+            var matchSearch = !searchQuery || title.indexOf(searchQuery) !== -1 || desc.indexOf(searchQuery) !== -1;
+
+            if (isCourse) {
+                var matchFilter = activeFilter === 'all' || activeFilter === 'Статьи' || category === activeFilter;
+                if (matchFilter && matchSearch) result.push(item);
+            } else {
+                if (matchSearch) result.push(item);
+            }
+        }
+        return result;
     }
 
     function renderCourses(courses) {
         var grid = document.getElementById('coursesGrid');
-        var empty = document.getElementById('coursesEmpty');
 
         if (!courses.length) {
             grid.innerHTML = '';
-            empty.classList.remove('hidden');
             return;
         }
 
-        empty.classList.add('hidden');
+        // Находим максимальные длины для выравнивания
+        var maxTitleLen = 0;
+        var maxDescLen = 0;
+        for (var j = 0; j < courses.length; j++) {
+            if (courses[j].title.length > maxTitleLen) maxTitleLen = courses[j].title.length;
+            if (courses[j].description.length > maxDescLen) maxDescLen = courses[j].description.length;
+        }
+
         var html = '';
 
         for (var i = 0; i < courses.length; i++) {
             var c = courses[i];
             var progress = Math.round((c.id / 6) * 100);
 
-            html += '<div class="course-card" data-category="' + esc(c.category) + '" data-title="' + esc(c.title) + '" data-desc="' + esc(c.description) + '" style="animation-delay:' + (i * 0.05) + 's">';
+            html += '<div class="course-card" style="animation-delay:' + (i * 0.05) + 's">';
             html += '  <div class="card-header">';
             html += '    <div class="card-emoji">' + c.emoji + '</div>';
-            html += '    <div>';
+            html += '    <div class="card-header-text">';
             html += '      <span class="card-block-label">' + esc(c.block) + '</span>';
             html += '      <h3 class="card-title">' + esc(c.title) + '</h3>';
             html += '    </div>';
             html += '  </div>';
             html += '  <div class="card-body">';
             html += '    <p class="card-description">' + esc(c.description) + '</p>';
+            html += '  </div>';
+            html += '  <div class="card-meta">';
             html += '    <span class="card-category">' + esc(c.category) + '</span>';
             html += '  </div>';
             html += '  <div class="progress-track">';
@@ -94,18 +138,18 @@
 
         if (!articles.length) {
             grid.innerHTML = '';
-            empty.classList.remove('hidden');
+            if (empty) empty.classList.add('hidden');
             return;
         }
 
-        empty.classList.add('hidden');
+        if (empty) empty.classList.add('hidden');
         var html = '';
 
         for (var i = 0; i < articles.length; i++) {
             var a = articles[i];
             var date = formatDate(a.date);
 
-            html += '<a href="' + esc(a.file) + '" class="article-card" data-title="' + esc(a.title) + '" data-desc="' + esc(a.description) + '" style="animation-delay:' + (i * 0.1) + 's">';
+            html += '<a href="' + esc(a.file) + '" class="article-card" style="animation-delay:' + (i * 0.1) + 's">';
             html += '  <div class="article-card-meta">';
             html += '    <span class="article-card-tag">' + esc(a.tag) + '</span>';
             html += '    <span class="article-card-date">' + date + '</span>';
@@ -126,7 +170,7 @@
             clearTimeout(timer);
             timer = setTimeout(function () {
                 searchQuery = input.value.trim().toLowerCase();
-                applyFilters();
+                renderAll();
             }, 200);
         });
     }
@@ -145,62 +189,8 @@
             btn.classList.add('active');
 
             activeFilter = btn.getAttribute('data-filter');
-            applyFilters();
+            renderAll();
         });
-    }
-
-    function applyFilters() {
-        var courseCards = document.querySelectorAll('.course-card');
-        var visibleCourses = 0;
-
-        for (var i = 0; i < courseCards.length; i++) {
-            var card = courseCards[i];
-            var category = card.getAttribute('data-category');
-            var title = (card.getAttribute('data-title') || '').toLowerCase();
-            var desc = (card.getAttribute('data-desc') || '').toLowerCase();
-
-            var matchFilter = activeFilter === 'all' || category === activeFilter;
-            var matchSearch = !searchQuery || title.indexOf(searchQuery) !== -1 || desc.indexOf(searchQuery) !== -1;
-
-            if (matchFilter && matchSearch) {
-                card.style.display = '';
-                visibleCourses++;
-            } else {
-                card.style.display = 'none';
-            }
-        }
-
-        var coursesEmpty = document.getElementById('coursesEmpty');
-        if (visibleCourses === 0) {
-            coursesEmpty.classList.remove('hidden');
-        } else {
-            coursesEmpty.classList.add('hidden');
-        }
-
-        var articleCards = document.querySelectorAll('.article-card');
-        var visibleArticles = 0;
-
-        for (var j = 0; j < articleCards.length; j++) {
-            var aCard = articleCards[j];
-            var aTitle = (aCard.getAttribute('data-title') || '').toLowerCase();
-            var aDesc = (aCard.getAttribute('data-desc') || '').toLowerCase();
-
-            var aMatch = !searchQuery || aTitle.indexOf(searchQuery) !== -1 || aDesc.indexOf(searchQuery) !== -1;
-
-            if (aMatch) {
-                aCard.style.display = '';
-                visibleArticles++;
-            } else {
-                aCard.style.display = 'none';
-            }
-        }
-
-        var articlesEmpty = document.getElementById('articlesEmpty');
-        if (visibleArticles === 0) {
-            articlesEmpty.classList.remove('hidden');
-        } else {
-            articlesEmpty.classList.add('hidden');
-        }
     }
 
     function esc(str) {
@@ -213,16 +203,6 @@
         var months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
         var parts = dateStr.split('-');
         return parseInt(parts[2]) + ' ' + months[parseInt(parts[1]) - 1] + ' ' + parts[0];
-    }
-
-    function updateCoursesCount(count) {
-        var el = document.getElementById('coursesCount');
-        if (el) el.textContent = count + ' ' + declension(count, 'блок', 'блока', 'блоков');
-    }
-
-    function updateArticlesCount(count) {
-        var el = document.getElementById('articlesCount');
-        if (el) el.textContent = count + ' ' + declension(count, 'статья', 'статьи', 'статей');
     }
 
     function declension(n, one, two, five) {
@@ -239,8 +219,8 @@
             { id:1, title:"Написание промптов: основа работы с ИИ", block:"Блок 1", emoji:"✍️", description:"Всё начинается с промпта — вашего запроса или инструкции для ИИ.", link:"https://new-acc-space-6754.ispring.ru/app/preview/eb3c9e2d-0343-11f1-afeb-3292ce742d0c", category:"Основы" },
             { id:2, title:"Возможности современных ИИ-систем в работе с текстом", block:"Блок 2", emoji:"📝", description:"Узнайте, как с помощью ИИ составлять деловые письма и улучшать тексты.", link:"https://new-acc-space-6754.ispring.ru/app/preview/abb24110-0732-11f1-8c42-9a5c27d099db", category:"Текст" },
             { id:3, title:"Анализ данных с помощью ИИ + визуализация", block:"Блок 3", emoji:"📊", description:"Анализируйте данные быстрее, находите закономерности, стройте прогнозы.", link:"https://new-acc-space-6754.ispring.ru/app/preview/faeb883a-0ca3-11f1-b4ff-c2aff0ebdc4f", category:"Аналитика" },
-            { id:4, title:"Визуальный контент: от слайдов до видео (Часть 1)", block:"Блок 4", emoji:"🎨", description:"Прокачайте визуал! Научимся работать с презентациями.", link:"https://new-acc-space-6754.ispring.ru/app/preview/659bcf99-1245-11f1-90a9-c2e14774ea64", category:"Визуал" },
-            { id:5, title:"Визуальный контент: иллюстрации и видео (Часть 2)", block:"Блок 5", emoji:"🎬", description:"Создание изображений, редактирование фото, создание коротких видео.", link:"https://new-acc-space-6754.ispring.ru/app/preview/77d45172-1947-11f1-a7d7-eef858ee11f2", category:"Визуал" },
+            { id:4, title:"Визуальный контент: презентации и инфографики", block:"Блок 4", emoji:"🎨", description:"Прокачайте визуал! Научимся работать с презентациями.", link:"https://new-acc-space-6754.ispring.ru/app/preview/659bcf99-1245-11f1-90a9-c2e14774ea64", category:"Визуал" },
+            { id:5, title:"Визуальный контент: иллюстрации и видео", block:"Блок 5", emoji:"🎬", description:"Создание изображений, редактирование фото, создание коротких видео.", link:"https://new-acc-space-6754.ispring.ru/app/preview/77d45172-1947-11f1-a7d7-eef858ee11f2", category:"Визуал" },
             { id:6, title:"Продвинутый промптинг: сложные запросы", block:"Блок 6", emoji:"🎯", description:"Сложные цепочки запросов, управление контекстом, промптинг для комплексных задач.", link:"https://new-acc-space-6754.ispring.ru/app/preview/7188dc1f-1e22-11f1-9ee9-5e011133f086", category:"Продвинутый" }
         ];
     }

@@ -14,31 +14,22 @@
         <div class="header-inner">
             <a href="index.html" class="logo-link">
                 <div class="logo-placeholder">
-    <img src="assets/logo.svg" alt="585 GOLD" class="logo-img">
-</div>
+                    <img src="assets/logo.svg" alt="585 GOLD" class="logo-img">
+                </div>
                 <span class="portal-title">ИИ-курс</span>
             </a>
-            <nav class="header-nav">
-                <a href="#courses" class="nav-btn nav-btn-courses">📚 Курсы</a>
-                <a href="#articles" class="nav-btn nav-btn-articles">📖 Статьи</a>
-            </nav>
+            <div class="header-search">
+                <input type="text" class="search-input" id="searchInput" placeholder="Поиск по курсам и статьям..." autocomplete="off">
+            </div>
         </div>
     </header>
 
     <section class="hero">
-        <h1>Освойте <span class="accent">ИИ</span> для работы</h1>
+        <h1>Освойте <span class="accent">нейросети</span> для работы</h1>
         <p>6 практических блоков — от первого промпта до продвинутых техник. Без регистрации, в удобном темпе. Просто выберите блок и начните.</p>
     </section>
 
     <section class="section scroll-anchor" id="courses">
-        <div class="section-header">
-            <h2 class="section-title">Программа курса</h2>
-            <span class="section-badge" id="coursesCount">6 блоков</span>
-        </div>
-
-        <div class="search-bar">
-            <input type="text" class="search-input" id="searchInput" placeholder="Поиск по курсам и статьям..." autocomplete="off">
-        </div>
 
         <div class="filter-buttons" id="filterButtons">
             <button class="filter-btn active" data-filter="all">Все</button>
@@ -47,6 +38,7 @@
             <button class="filter-btn" data-filter="Аналитика">Аналитика</button>
             <button class="filter-btn" data-filter="Визуал">Визуал</button>
             <button class="filter-btn" data-filter="Продвинутый">Продвинутый</button>
+            <button class="filter-btn" data-filter="Статьи">Статьи</button>
         </div>
 
         <div class="courses-grid" id="coursesGrid"></div>
@@ -58,10 +50,6 @@
     </section>
 
     <section class="section scroll-anchor" id="articles">
-        <div class="section-header">
-            <h2 class="section-title">Полезные материалы</h2>
-            <span class="section-badge" id="articlesCount">0 статей</span>
-        </div>
 
         <div class="articles-grid" id="articlesGrid"></div>
 
