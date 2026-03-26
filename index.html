@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ИИ-курс 585 GOLD — Учебный портал</title>
+    <meta name="description" content="Учебный портал по работе с ИИ для сотрудников 585 GOLD">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⭐</text></svg>">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo-link">
+                <div class="logo-placeholder">
+                    <!-- Замени строку ниже на: <img src="assets/logo.svg" alt="585 GOLD" class="logo-img"> -->
+                    <span class="logo-text-fallback">585 GOLD</span>
+                </div>
+                <span class="portal-title">ИИ-курс</span>
+            </a>
+            <nav class="header-nav">
+                <a href="#courses" class="nav-btn nav-btn-courses">📚 Курсы</a>
+                <a href="#articles" class="nav-btn nav-btn-articles">📖 Статьи</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Освойте <span class="accent">ИИ</span> для работы</h1>
+        <p>6 практических блоков — от первого промпта до продвинутых техник. Без регистрации, в удобном темпе. Просто выберите блок и начните.</p>
+    </section>
+
+    <section class="section scroll-anchor" id="courses">
+        <div class="section-header">
+            <h2 class="section-title">Программа курса</h2>
+            <span class="section-badge" id="coursesCount">6 блоков</span>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" class="search-input" id="searchInput" placeholder="Поиск по курсам и статьям..." autocomplete="off">
+        </div>
+
+        <div class="filter-buttons" id="filterButtons">
+            <button class="filter-btn active" data-filter="all">Все</button>
+            <button class="filter-btn" data-filter="Основы">Основы</button>
+            <button class="filter-btn" data-filter="Текст">Текст</button>
+            <button class="filter-btn" data-filter="Аналитика">Аналитика</button>
+            <button class="filter-btn" data-filter="Визуал">Визуал</button>
+            <button class="filter-btn" data-filter="Продвинутый">Продвинутый</button>
+        </div>
+
+        <div class="courses-grid" id="coursesGrid"></div>
+
+        <div class="empty-state hidden" id="coursesEmpty">
+            <div class="empty-state-icon">🔍</div>
+            <p>Ничего не найдено. Попробуйте другой запрос.</p>
+        </div>
+    </section>
+
+    <section class="section scroll-anchor" id="articles">
+        <div class="section-header">
+            <h2 class="section-title">Полезные материалы</h2>
+            <span class="section-badge" id="articlesCount">0 статей</span>
+        </div>
+
+        <div class="articles-grid" id="articlesGrid"></div>
+
+        <div class="empty-state" id="articlesEmpty">
+            <div class="empty-state-icon">📖</div>
+            <p>Скоро здесь появятся полезные статьи и материалы.</p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <p>© 2025 ИИ-курс 585 GOLD — Учебный портал для сотрудников</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
